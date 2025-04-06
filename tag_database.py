@@ -17,8 +17,6 @@ class TagConnection:
       self.connection = sqlite3.connect(self.path)
       self.cursor = self.connection.cursor()
   
-     
-
   def create_database(self) -> None:
     """
     Create a SQLite database to store file tags.
@@ -30,8 +28,9 @@ class TagConnection:
         CREATE TABLE IF NOT EXISTS file_tags (
             id INTEGER PRIMARY KEY,
             file_path TEXT,
-            tag TEXT
+            tag_description TEXT,
             tag_strength INTEGER DEFAULT 0,
+            UNIQUE(file_path, tag_description)
         )
     ''')
 
@@ -39,16 +38,17 @@ class TagConnection:
     tag_parameters = [
         (tag.file_path, tag.tag_description, tag.tag_strength)
         for tag in file_tags
+        if tag.tag_description
     ]
     self.cursor.executemany('''
-        INSERT INTO file_tags (file_path, tag, tag_strength)
+        INSERT INTO file_tags (file_path, tag_description, tag_strength)
         VALUES (?, ?, ?)
     ''', tag_parameters)
     self.connection.commit()
   
   def get_tag_files(self, tag: str) -> list[FileTag]:
     self.cursor.execute('''
-        SELECT id, file_path, tag, tag_strength
+        SELECT id, file_path, tag_description, tag_strength
         FROM file_tags
         WHERE file_path = ?
         ORDER BY tag_strength DESC
@@ -60,10 +60,10 @@ class TagConnection:
 class TagDatabase:
   def __init__(self, db_path: Path) -> None:
     self.path = db_path
+    self.connection: TagConnection | None = None
     if not db_path.exists():
         with self as conn:
           conn.create_database()
-    self.connection: TagConnection | None = None
   
   def __enter__(self) -> TagConnection:
       if self.connection:

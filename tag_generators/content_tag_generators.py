@@ -24,7 +24,12 @@ def typescript_content_generator(file_path: Path) -> Iterable[FileTag]:
     Returns:
         Iterable[FileTag]: An iterable of FileTag objects.
     """
-    path_content = file_path.read_text()
+    try:
+        # Read the content of the TypeScript file
+        path_content = file_path.read_text()
+    except UnicodeDecodeError:
+        # Handle files that cannot be decoded as text
+        return []
     tags = []
     # Example: Add a tag for each exported member from file.
     for line in path_content.splitlines():

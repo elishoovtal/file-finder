@@ -39,4 +39,4 @@ def directory_generator(file_path: Path) -> Iterable[FileTag]:
     Returns:
         str: The generated tag.
     """
-    return [FileTag(file_path=str(parent), tag_description=parent.name, tag_strength=DIRECT_PARENT_STRENGTH - i) for i, parent in enumerate(file_path.parents)]
+    return [FileTag(file_path=str(file_path), tag_description=str(parent), tag_strength=DIRECT_PARENT_STRENGTH - i) for i, parent in enumerate(file_path.parents)]
