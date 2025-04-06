@@ -24,6 +24,8 @@ def typescript_content_generator(file_path: Path) -> Iterable[FileTag]:
     Returns:
         Iterable[FileTag]: An iterable of FileTag objects.
     """
+    if file_path.suffix != '.ts':
+        return []
     try:
         # Read the content of the TypeScript file
         path_content = file_path.read_text()
