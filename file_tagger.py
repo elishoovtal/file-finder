@@ -16,6 +16,3 @@ def tag_all_files(parent_path: Path, tag_database: TagDatabase) -> None:
       for file_path in parent_path.rglob('*'):
           if file_path.is_file():
               connection.add_file_tags(list(generate_tags(file_path)))
-
-if __name__ == "__main__":
-    tag_all_files(Path('.'), TagDatabase(Path('file_tags.db')))
