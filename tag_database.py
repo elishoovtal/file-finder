@@ -43,6 +43,7 @@ class TagConnection:
     self.cursor.executemany('''
         INSERT INTO file_tags (file_path, tag_description, tag_strength)
         VALUES (?, ?, ?)
+        ON CONFLICT(file_path, tag_description) DO NOTHING
     ''', tag_parameters)
     self.connection.commit()
   
